@@ -56,7 +56,7 @@ const Index = () => {
         <div className="container relative z-10">
           <div className="mx-auto max-w-3xl text-center">
             <h1 className="mb-6 text-4xl font-bold md:text-5xl lg:text-6xl">
-              Encontre o Imóvel dos Seus Sonhos
+              Caminhos que levam a conquistas.
             </h1>
             <p className="mb-8 text-lg text-white/90 md:text-xl">
               Imóveis verificados pela KÈSO e anúncios diretos de proprietários.
