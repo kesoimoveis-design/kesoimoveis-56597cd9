@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
@@ -5,47 +6,56 @@ import Footer from "@/components/Footer";
 import SearchBar from "@/components/SearchBar";
 import PropertyCard from "@/components/PropertyCard";
 import { Building2, CheckCircle2, Shield, TrendingUp } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Index = () => {
-  // Mock data - substituir por dados reais do Supabase
-  const featuredProperties = [
-    {
-      id: "1",
-      image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800",
-      title: "Casa moderna com 3 quartos",
-      price: 850000,
-      location: "São Paulo, SP",
-      bedrooms: 3,
-      bathrooms: 2,
-      parking: 2,
-      area: 180,
-      verified: true,
-    },
-    {
-      id: "2",
-      image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800",
-      title: "Apartamento no centro",
-      price: 450000,
-      location: "Rio de Janeiro, RJ",
-      bedrooms: 2,
-      bathrooms: 1,
-      parking: 1,
-      area: 75,
-      verified: true,
-    },
-    {
-      id: "3",
-      image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800",
-      title: "Cobertura com vista panorâmica",
-      price: 1200000,
-      location: "Belo Horizonte, MG",
-      bedrooms: 4,
-      bathrooms: 3,
-      parking: 3,
-      area: 220,
-      ownerDirect: true,
-    },
-  ];
+  const [featuredProperties, setFeaturedProperties] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchFeaturedProperties();
+  }, []);
+
+  const fetchFeaturedProperties = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("properties")
+        .select(`
+          *,
+          cities (name, state),
+          property_photos (url, is_main)
+        `)
+        .eq("status", "active")
+        .eq("featured", true)
+        .order("created_at", { ascending: false })
+        .limit(3);
+
+      if (error) throw error;
+
+      const formattedProperties = data?.map((property) => ({
+        id: property.id,
+        image: property.property_photos?.find((p: any) => p.is_main)?.url || 
+                property.property_photos?.[0]?.url || 
+                "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800",
+        title: property.address,
+        price: property.price,
+        location: `${property.cities?.name}, ${property.cities?.state}`,
+        bedrooms: property.bedrooms,
+        bathrooms: property.bathrooms,
+        parking: property.parking_spaces,
+        area: property.area,
+        verified: property.verified,
+        ownerDirect: property.is_owner_direct,
+      }));
+
+      setFeaturedProperties(formattedProperties || []);
+    } catch (error) {
+      console.error("Error fetching featured properties:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -116,11 +126,30 @@ const Index = () => {
               <Link to="/imoveis">Ver Todos</Link>
             </Button>
           </div>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {featuredProperties.map((property) => (
-              <PropertyCard key={property.id} {...property} />
-            ))}
-          </div>
+          
+          {loading ? (
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="space-y-4">
+                  <Skeleton className="h-64 w-full" />
+                  <Skeleton className="h-6 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                </div>
+              ))}
+            </div>
+          ) : featuredProperties.length > 0 ? (
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {featuredProperties.map((property) => (
+                <PropertyCard key={property.id} {...property} />
+              ))}
+            </div>
+          ) : (
+            <div className="py-12 text-center">
+              <p className="text-lg text-muted-foreground">
+                Nenhum imóvel em destaque no momento.
+              </p>
+            </div>
+          )}
         </div>
       </section>
 
