@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Home, Building2, User, Menu } from "lucide-react";
+import { Home, Building2, User, Menu, LogOut } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user, signOut } = useAuth();
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
@@ -33,15 +35,29 @@ const Navbar = () => {
 
         {/* Desktop CTA */}
         <div className="hidden items-center space-x-3 md:flex">
-          <Button variant="ghost" size="sm" asChild>
-            <Link to="/login">
-              <User className="mr-2 h-4 w-4" />
-              Entrar
-            </Link>
-          </Button>
-          <Button size="sm" asChild>
-            <Link to="/cadastro">Cadastrar</Link>
-          </Button>
+          {user ? (
+            <>
+              <span className="text-sm text-muted-foreground">
+                Olá, {user.user_metadata?.name || "Usuário"}
+              </span>
+              <Button variant="ghost" size="sm" onClick={signOut}>
+                <LogOut className="mr-2 h-4 w-4" />
+                Sair
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button variant="ghost" size="sm" asChild>
+                <Link to="/login">
+                  <User className="mr-2 h-4 w-4" />
+                  Entrar
+                </Link>
+              </Button>
+              <Button size="sm" asChild>
+                <Link to="/cadastro">Cadastrar</Link>
+              </Button>
+            </>
+          )}
         </div>
 
         {/* Mobile Menu Button */}
@@ -80,14 +96,38 @@ const Navbar = () => {
             >
               Anunciar Imóvel
             </Link>
-            <div className="flex space-x-2 pt-2">
-              <Button variant="ghost" size="sm" className="flex-1" asChild>
-                <Link to="/login">Entrar</Link>
-              </Button>
-              <Button size="sm" className="flex-1" asChild>
-                <Link to="/cadastro">Cadastrar</Link>
-              </Button>
-            </div>
+            {user ? (
+              <div className="space-y-2 border-t pt-3">
+                <p className="px-3 text-sm text-muted-foreground">
+                  {user.user_metadata?.name || "Usuário"}
+                </p>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="w-full justify-start"
+                  onClick={() => {
+                    signOut();
+                    setMobileMenuOpen(false);
+                  }}
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sair
+                </Button>
+              </div>
+            ) : (
+              <div className="flex space-x-2 border-t pt-3">
+                <Button variant="ghost" size="sm" className="flex-1" asChild>
+                  <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
+                    Entrar
+                  </Link>
+                </Button>
+                <Button size="sm" className="flex-1" asChild>
+                  <Link to="/cadastro" onClick={() => setMobileMenuOpen(false)}>
+                    Cadastrar
+                  </Link>
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       )}
