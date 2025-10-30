@@ -4,10 +4,15 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Properties from "./pages/Properties";
 import PropertyDetails from "./pages/PropertyDetails";
+import AddProperty from "./pages/AddProperty";
+import MyProperties from "./pages/MyProperties";
+import Admin from "./pages/Admin";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +31,38 @@ const App = () => (
             <Route path="/cadastro" element={<Auth />} />
             <Route path="/imoveis" element={<Properties />} />
             <Route path="/imovel/:id" element={<PropertyDetails />} />
+            <Route
+              path="/perfil"
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/anunciar"
+              element={
+                <ProtectedRoute requireOwner>
+                  <AddProperty />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/meus-imoveis"
+              element={
+                <ProtectedRoute requireOwner>
+                  <MyProperties />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute requireAdmin>
+                  <Admin />
+                </ProtectedRoute>
+              }
+            />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

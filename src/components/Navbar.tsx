@@ -1,128 +1,178 @@
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Home, Building2, User, Menu, LogOut } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import { Menu, X, User, LogOut, Home as HomeIcon, Building2, PlusCircle, Settings } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
+import { useUserRole } from "@/hooks/useUserRole";
 
-const Navbar = () => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+export default function Navbar() {
+  const [isOpen, setIsOpen] = useState(false);
   const { user, signOut } = useAuth();
+  const { isAdmin, isOwner } = useUserRole();
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
-      <div className="container flex h-16 items-center justify-between">
-        {/* Logo */}
-        <Link to="/" className="flex items-center space-x-2">
-          <Building2 className="h-6 w-6 text-primary" />
-          <span className="text-xl font-bold text-primary">KÈSO</span>
-          <span className="hidden text-sm text-muted-foreground sm:inline">Imóveis</span>
-        </Link>
+      <div className="container mx-auto px-4">
+        <div className="flex h-16 items-center justify-between">
+          {/* Logo */}
+          <Link to="/" className="flex items-center space-x-2">
+            <Building2 className="h-6 w-6 text-primary" />
+            <span className="text-xl font-bold text-primary">KÈSO</span>
+            <span className="hidden text-sm text-muted-foreground sm:inline">Imóveis</span>
+          </Link>
 
-        {/* Desktop Navigation */}
-        <div className="hidden items-center space-x-6 md:flex">
-          <Link to="/" className="flex items-center space-x-1 text-sm font-medium text-foreground transition-colors hover:text-primary">
-            <Home className="h-4 w-4" />
-            <span>Início</span>
-          </Link>
-          <Link to="/imoveis" className="flex items-center space-x-1 text-sm font-medium text-foreground transition-colors hover:text-primary">
-            <Building2 className="h-4 w-4" />
-            <span>Imóveis</span>
-          </Link>
-          <Link to="/anunciar" className="text-sm font-medium text-foreground transition-colors hover:text-primary">
-            Anunciar Imóvel
-          </Link>
-        </div>
-
-        {/* Desktop CTA */}
-        <div className="hidden items-center space-x-3 md:flex">
-          {user ? (
-            <>
-              <span className="text-sm text-muted-foreground">
-                Olá, {user.user_metadata?.name || "Usuário"}
-              </span>
-              <Button variant="ghost" size="sm" onClick={signOut}>
-                <LogOut className="mr-2 h-4 w-4" />
-                Sair
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button variant="ghost" size="sm" asChild>
-                <Link to="/login">
-                  <User className="mr-2 h-4 w-4" />
-                  Entrar
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-6">
+            <Link to="/" className="text-foreground hover:text-primary transition-colors flex items-center gap-2">
+              <HomeIcon className="h-4 w-4" />
+              Início
+            </Link>
+            <Link to="/imoveis" className="text-foreground hover:text-primary transition-colors flex items-center gap-2">
+              <Building2 className="h-4 w-4" />
+              Imóveis
+            </Link>
+            {isOwner && (
+              <>
+                <Link to="/anunciar" className="text-foreground hover:text-primary transition-colors flex items-center gap-2">
+                  <PlusCircle className="h-4 w-4" />
+                  Anunciar
                 </Link>
-              </Button>
-              <Button size="sm" asChild>
-                <Link to="/cadastro">Cadastrar</Link>
-              </Button>
-            </>
-          )}
-        </div>
+                <Link to="/meus-imoveis" className="text-foreground hover:text-primary transition-colors flex items-center gap-2">
+                  <Building2 className="h-4 w-4" />
+                  Meus Imóveis
+                </Link>
+              </>
+            )}
+            {isAdmin && (
+              <Link to="/admin" className="text-foreground hover:text-primary transition-colors flex items-center gap-2">
+                <Settings className="h-4 w-4" />
+                Admin
+              </Link>
+            )}
+          </div>
 
-        {/* Mobile Menu Button */}
-        <button
-          className="inline-flex items-center justify-center rounded-md p-2 text-foreground hover:bg-accent md:hidden"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        >
-          <Menu className="h-6 w-6" />
-        </button>
+          {/* Desktop Auth */}
+          <div className="hidden md:flex items-center gap-4">
+            {user ? (
+              <div className="flex items-center gap-4">
+                <Button variant="ghost" size="sm" asChild>
+                  <Link to="/perfil" className="flex items-center gap-2">
+                    <User className="h-4 w-4" />
+                    Perfil
+                  </Link>
+                </Button>
+                <Button variant="ghost" size="sm" onClick={signOut}>
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sair
+                </Button>
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                <Button variant="ghost" asChild>
+                  <Link to="/login">Entrar</Link>
+                </Button>
+                <Button asChild>
+                  <Link to="/cadastro">Cadastrar</Link>
+                </Button>
+              </div>
+            )}
+          </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            className="md:hidden p-2 rounded-md hover:bg-accent"
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}
-      {mobileMenuOpen && (
-        <div className="border-t bg-card md:hidden">
-          <div className="container space-y-3 py-4">
+      {isOpen && (
+        <div className="md:hidden border-t bg-card">
+          <div className="container mx-auto px-4 py-4 space-y-2">
             <Link
               to="/"
-              className="flex items-center space-x-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-accent"
-              onClick={() => setMobileMenuOpen(false)}
+              className="block py-2 text-foreground hover:text-primary transition-colors"
+              onClick={() => setIsOpen(false)}
             >
-              <Home className="h-4 w-4" />
-              <span>Início</span>
+              Início
             </Link>
             <Link
               to="/imoveis"
-              className="flex items-center space-x-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-accent"
-              onClick={() => setMobileMenuOpen(false)}
+              className="block py-2 text-foreground hover:text-primary transition-colors"
+              onClick={() => setIsOpen(false)}
             >
-              <Building2 className="h-4 w-4" />
-              <span>Imóveis</span>
+              Imóveis
             </Link>
-            <Link
-              to="/anunciar"
-              className="block rounded-md px-3 py-2 text-sm font-medium hover:bg-accent"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Anunciar Imóvel
-            </Link>
+            {isOwner && (
+              <>
+                <Link
+                  to="/anunciar"
+                  className="block py-2 text-foreground hover:text-primary transition-colors"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Anunciar Imóvel
+                </Link>
+                <Link
+                  to="/meus-imoveis"
+                  className="block py-2 text-foreground hover:text-primary transition-colors"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Meus Imóveis
+                </Link>
+              </>
+            )}
+            {isAdmin && (
+              <Link
+                to="/admin"
+                className="block py-2 text-foreground hover:text-primary transition-colors"
+                onClick={() => setIsOpen(false)}
+              >
+                Admin
+              </Link>
+            )}
+
             {user ? (
-              <div className="space-y-2 border-t pt-3">
-                <p className="px-3 text-sm text-muted-foreground">
-                  {user.user_metadata?.name || "Usuário"}
-                </p>
+              <div className="space-y-2 pt-4 border-t">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="w-full justify-start"
+                  asChild
+                >
+                  <Link to="/perfil" onClick={() => setIsOpen(false)}>
+                    <User className="h-4 w-4 mr-2" />
+                    Perfil
+                  </Link>
+                </Button>
                 <Button
                   variant="ghost"
                   size="sm"
                   className="w-full justify-start"
                   onClick={() => {
                     signOut();
-                    setMobileMenuOpen(false);
+                    setIsOpen(false);
                   }}
                 >
-                  <LogOut className="mr-2 h-4 w-4" />
+                  <LogOut className="h-4 w-4 mr-2" />
                   Sair
                 </Button>
               </div>
             ) : (
-              <div className="flex space-x-2 border-t pt-3">
-                <Button variant="ghost" size="sm" className="flex-1" asChild>
-                  <Link to="/login" onClick={() => setMobileMenuOpen(false)}>
+              <div className="space-y-2 pt-4 border-t">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start"
+                  asChild
+                >
+                  <Link to="/login" onClick={() => setIsOpen(false)}>
                     Entrar
                   </Link>
                 </Button>
-                <Button size="sm" className="flex-1" asChild>
-                  <Link to="/cadastro" onClick={() => setMobileMenuOpen(false)}>
+                <Button className="w-full" asChild>
+                  <Link to="/cadastro" onClick={() => setIsOpen(false)}>
                     Cadastrar
                   </Link>
                 </Button>
@@ -133,6 +183,4 @@ const Navbar = () => {
       )}
     </nav>
   );
-};
-
-export default Navbar;
+}
