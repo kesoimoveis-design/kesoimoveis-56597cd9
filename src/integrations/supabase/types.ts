@@ -119,6 +119,7 @@ export type Database = {
           price: number
           status: Database["public"]["Enums"]["property_status"]
           type: Database["public"]["Enums"]["property_type"]
+          type_id: string | null
           updated_at: string
           verified: boolean
         }
@@ -140,6 +141,7 @@ export type Database = {
           price: number
           status?: Database["public"]["Enums"]["property_status"]
           type: Database["public"]["Enums"]["property_type"]
+          type_id?: string | null
           updated_at?: string
           verified?: boolean
         }
@@ -161,6 +163,7 @@ export type Database = {
           price?: number
           status?: Database["public"]["Enums"]["property_status"]
           type?: Database["public"]["Enums"]["property_type"]
+          type_id?: string | null
           updated_at?: string
           verified?: boolean
         }
@@ -170,6 +173,13 @@ export type Database = {
             columns: ["city_id"]
             isOneToOne: false
             referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "properties_type_id_fkey"
+            columns: ["type_id"]
+            isOneToOne: false
+            referencedRelation: "property_types"
             referencedColumns: ["id"]
           },
         ]
@@ -205,6 +215,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      property_types: {
+        Row: {
+          active: boolean | null
+          created_at: string | null
+          description: string | null
+          display_order: number | null
+          icon: string | null
+          id: string
+          name: string
+          slug: string
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          icon?: string | null
+          id?: string
+          name: string
+          slug: string
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          icon?: string | null
+          id?: string
+          name?: string
+          slug?: string
+        }
+        Relationships: []
       }
       service_orders: {
         Row: {

@@ -1,15 +1,29 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const SearchBar = () => {
   const navigate = useNavigate();
   const [location, setLocation] = useState("");
   const [finalidade, setFinalidade] = useState("");
   const [tipo, setTipo] = useState("");
+  const [propertyTypes, setPropertyTypes] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchTypes = async () => {
+      const { data } = await supabase
+        .from("property_types")
+        .select("*")
+        .eq("active", true)
+        .order("display_order");
+      if (data) setPropertyTypes(data);
+    };
+    fetchTypes();
+  }, []);
 
   const handleSearch = () => {
     const params = new URLSearchParams();
@@ -54,10 +68,11 @@ const SearchBar = () => {
               <SelectValue placeholder="Tipo" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="casa">Casa</SelectItem>
-              <SelectItem value="apartamento">Apartamento</SelectItem>
-              <SelectItem value="terreno">Terreno</SelectItem>
-              <SelectItem value="comercial">Comercial</SelectItem>
+              {propertyTypes.map((type) => (
+                <SelectItem key={type.id} value={type.slug}>
+                  {type.name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>

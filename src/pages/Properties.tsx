@@ -42,6 +42,7 @@ const Properties = () => {
         area: property.area,
         verified: property.verified,
         ownerDirect: property.is_owner_direct,
+        featured: property.featured,
       }));
 
       setProperties(formattedProperties || []);

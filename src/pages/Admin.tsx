@@ -9,7 +9,9 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Home, Users, MessageSquare, MapPin, CheckCircle, XCircle, Star } from "lucide-react";
+import { Home, Users, MessageSquare, MapPin, CheckCircle, XCircle, Star, Building } from "lucide-react";
+import { CityManagement } from "@/components/admin/CityManagement";
+import { PropertyTypeManagement } from "@/components/admin/PropertyTypeManagement";
 
 export default function Admin() {
   const { toast } = useToast();
@@ -117,6 +119,23 @@ export default function Admin() {
 
   const togglePropertyFeature = async (id: string, currentValue: boolean, field: string) => {
     try {
+      // Check featured limit when trying to feature a property
+      if (field === "featured" && !currentValue) {
+        const { count } = await supabase
+          .from("properties")
+          .select("*", { count: "exact", head: true })
+          .eq("featured", true);
+
+        if (count && count >= 6) {
+          toast({
+            title: "Limite atingido",
+            description: "Você já tem 6 imóveis em destaque. Remova um antes de adicionar outro.",
+            variant: "destructive",
+          });
+          return;
+        }
+      }
+
       const { error } = await supabase
         .from("properties")
         .update({ [field]: !currentValue })
@@ -126,6 +145,9 @@ export default function Admin() {
 
       toast({
         title: "Atualizado com sucesso",
+        description: field === "featured" 
+          ? (currentValue ? "Imóvel removido dos destaques" : "Imóvel adicionado aos destaques") 
+          : undefined,
       });
 
       fetchData();
@@ -218,6 +240,7 @@ export default function Admin() {
             <TabsTrigger value="users">Usuários</TabsTrigger>
             <TabsTrigger value="leads">Leads</TabsTrigger>
             <TabsTrigger value="cities">Cidades</TabsTrigger>
+            <TabsTrigger value="types">Tipos</TabsTrigger>
           </TabsList>
 
           <TabsContent value="properties">
@@ -405,28 +428,16 @@ export default function Admin() {
 
           <TabsContent value="cities">
             <Card>
-              <CardHeader>
-                <CardTitle>Cidades Cadastradas</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Cidade</TableHead>
-                      <TableHead>Estado</TableHead>
-                      <TableHead>Slug</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {cities.map((city) => (
-                      <TableRow key={city.id}>
-                        <TableCell>{city.name}</TableCell>
-                        <TableCell>{city.state}</TableCell>
-                        <TableCell>{city.slug}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+              <CardContent className="pt-6">
+                <CityManagement />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="types">
+            <Card>
+              <CardContent className="pt-6">
+                <PropertyTypeManagement />
               </CardContent>
             </Card>
           </TabsContent>

@@ -140,4 +140,13 @@ All colors MUST be HSL.
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-primary/80;
   }
+  
+  /* Ensure select items have proper contrast */
+  [data-radix-select-viewport] {
+    @apply bg-popover;
+  }
+  
+  [role="option"] {
+    @apply text-foreground;
+  }
 }

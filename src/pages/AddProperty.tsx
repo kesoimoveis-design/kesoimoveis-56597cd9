@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,7 +18,7 @@ import Footer from "@/components/Footer";
 import { Upload, X } from "lucide-react";
 
 const propertySchema = z.object({
-  type: z.enum(["casa", "apartamento", "terreno", "comercial", "rural"]),
+  type_id: z.string().uuid("Selecione um tipo de imóvel"),
   finalidade: z.enum(["buy", "rent"]),
   address: z.string().min(5, "Endereço deve ter pelo menos 5 caracteres"),
   city_id: z.string().uuid("Selecione uma cidade"),
@@ -40,24 +40,28 @@ export default function AddProperty() {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [cities, setCities] = useState<any[]>([]);
+  const [propertyTypes, setPropertyTypes] = useState<any[]>([]);
   const [images, setImages] = useState<File[]>([]);
   const [mainImageIndex, setMainImageIndex] = useState(0);
 
   const form = useForm<PropertyFormData>({
     resolver: zodResolver(propertySchema),
     defaultValues: {
-      type: "casa",
       finalidade: "buy",
     },
   });
 
-  useState(() => {
-    const fetchCities = async () => {
-      const { data } = await supabase.from("cities").select("*").order("name");
-      if (data) setCities(data);
+  useEffect(() => {
+    const fetchData = async () => {
+      const [citiesRes, typesRes] = await Promise.all([
+        supabase.from("cities").select("*").order("name"),
+        supabase.from("property_types").select("*").eq("active", true).order("display_order"),
+      ]);
+      if (citiesRes.data) setCities(citiesRes.data);
+      if (typesRes.data) setPropertyTypes(typesRes.data);
     };
-    fetchCities();
-  });
+    fetchData();
+  }, []);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -76,9 +80,10 @@ export default function AddProperty() {
     setLoading(true);
     try {
       // Create property
-      const propertyData = {
+      const propertyData: any = {
         owner_id: user.id,
-        type: data.type,
+        type_id: data.type_id,
+        type: "casa", // Temporary fallback for old column
         finalidade: data.finalidade,
         address: data.address,
         city_id: data.city_id,
@@ -171,22 +176,22 @@ export default function AddProperty() {
                   <div className="space-y-4">
                     <FormField
                       control={form.control}
-                      name="type"
+                      name="type_id"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Tipo de Imóvel</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue />
+                                <SelectValue placeholder="Selecione o tipo" />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="casa">Casa</SelectItem>
-                              <SelectItem value="apartamento">Apartamento</SelectItem>
-                              <SelectItem value="terreno">Terreno</SelectItem>
-                              <SelectItem value="comercial">Comercial</SelectItem>
-                              <SelectItem value="rural">Rural</SelectItem>
+                              {propertyTypes.map((type) => (
+                                <SelectItem key={type.id} value={type.id}>
+                                  {type.name}
+                                </SelectItem>
+                              ))}
                             </SelectContent>
                           </Select>
                           <FormMessage />
