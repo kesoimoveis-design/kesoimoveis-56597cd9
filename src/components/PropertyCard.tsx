@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Bed, Bath, Car, Maximize, MapPin } from "lucide-react";
+import { Bed, Bath, Car, Maximize, MapPin, AlertTriangle } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface PropertyCardProps {
@@ -58,7 +58,10 @@ const PropertyCard = ({
           {verified ? (
             <Badge className="bg-primary text-primary-foreground">Verificado</Badge>
           ) : ownerDirect ? (
-            <Badge variant="secondary">Proprietário Direto</Badge>
+            <Badge variant="outline" className="border-yellow-500 bg-yellow-50 text-yellow-700 dark:bg-yellow-950/20 dark:text-yellow-500">
+              <AlertTriangle className="mr-1 h-3 w-3" />
+              Proprietário
+            </Badge>
           ) : null}
         </div>
       </div>

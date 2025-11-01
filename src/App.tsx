@@ -5,6 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { WhatsAppButton } from "@/components/WhatsAppButton";
+import { CookieBanner } from "@/components/CookieBanner";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Properties from "./pages/Properties";
@@ -13,6 +15,8 @@ import AddProperty from "./pages/AddProperty";
 import MyProperties from "./pages/MyProperties";
 import Admin from "./pages/Admin";
 import Profile from "./pages/Profile";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +27,8 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
+        <WhatsAppButton />
+        <CookieBanner />
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
@@ -31,6 +37,8 @@ const App = () => (
             <Route path="/cadastro" element={<Auth />} />
             <Route path="/imoveis" element={<Properties />} />
             <Route path="/imovel/:id" element={<PropertyDetails />} />
+            <Route path="/termos" element={<Terms />} />
+            <Route path="/privacidade" element={<Privacy />} />
             <Route
               path="/perfil"
               element={

@@ -7,15 +7,16 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
 import { useToast } from "@/hooks/use-toast";
+import { fetchAddressByCep, formatCep } from "@/utils/viaCep";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Upload, X } from "lucide-react";
+import { Upload, X, Loader2, MapPin } from "lucide-react";
 
 const propertySchema = z.object({
   type_id: z.string().uuid("Selecione um tipo de imóvel"),
@@ -43,6 +44,9 @@ export default function AddProperty() {
   const [propertyTypes, setPropertyTypes] = useState<any[]>([]);
   const [images, setImages] = useState<File[]>([]);
   const [mainImageIndex, setMainImageIndex] = useState(0);
+  const [cep, setCep] = useState("");
+  const [loadingCep, setLoadingCep] = useState(false);
+  const [cepData, setCepData] = useState<any>(null);
 
   const form = useForm<PropertyFormData>({
     resolver: zodResolver(propertySchema),
@@ -62,6 +66,79 @@ export default function AddProperty() {
     };
     fetchData();
   }, []);
+
+  const handleCepSearch = async () => {
+    if (cep.replace(/\D/g, "").length !== 8) {
+      toast({
+        title: "CEP inválido",
+        description: "O CEP deve conter 8 dígitos",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoadingCep(true);
+    try {
+      const data = await fetchAddressByCep(cep);
+      setCepData(data);
+
+      // Auto-fill address
+      form.setValue("address", `${data.street}, ${data.neighborhood}`);
+
+      // Check if city exists
+      const { data: existingCity } = await supabase
+        .from("cities")
+        .select("*")
+        .ilike("name", data.city)
+        .eq("state", data.state)
+        .maybeSingle();
+
+      if (existingCity) {
+        form.setValue("city_id", existingCity.id);
+        toast({
+          title: "Endereço encontrado!",
+          description: "Dados preenchidos automaticamente.",
+        });
+      } else {
+        // City doesn't exist, ask to create
+        const shouldCreate = window.confirm(
+          `A cidade ${data.city}-${data.state} não está cadastrada. Deseja adicioná-la automaticamente?`
+        );
+
+        if (shouldCreate) {
+          const { data: newCity, error } = await supabase
+            .from("cities")
+            .insert({
+              name: data.city,
+              state: data.state,
+              slug: data.city.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, "-"),
+            })
+            .select()
+            .single();
+
+          if (error) throw error;
+
+          // Refresh cities list
+          const { data: citiesData } = await supabase.from("cities").select("*").order("name");
+          if (citiesData) setCities(citiesData);
+
+          form.setValue("city_id", newCity.id);
+          toast({
+            title: "Cidade criada!",
+            description: `${data.city}-${data.state} foi adicionada ao sistema.`,
+          });
+        }
+      }
+    } catch (error: any) {
+      toast({
+        title: "Erro ao buscar CEP",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingCep(false);
+    }
+  };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -221,6 +298,34 @@ export default function AddProperty() {
                       )}
                     />
 
+                    {/* CEP Search */}
+                    <FormItem>
+                      <FormLabel>CEP</FormLabel>
+                      <div className="flex gap-2">
+                        <Input
+                          placeholder="00000-000"
+                          value={cep}
+                          onChange={(e) => setCep(formatCep(e.target.value))}
+                          maxLength={9}
+                        />
+                        <Button
+                          type="button"
+                          onClick={handleCepSearch}
+                          disabled={loadingCep}
+                          variant="secondary"
+                        >
+                          {loadingCep ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <MapPin className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </div>
+                      <FormDescription>
+                        Digite o CEP para preencher automaticamente o endereço
+                      </FormDescription>
+                    </FormItem>
+
                     <FormField
                       control={form.control}
                       name="city_id"
@@ -251,9 +356,9 @@ export default function AddProperty() {
                       name="address"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Endereço</FormLabel>
+                          <FormLabel>Endereço Completo</FormLabel>
                           <FormControl>
-                            <Input placeholder="Rua, número, bairro" {...field} />
+                            <Input placeholder="Rua, número, complemento, bairro" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>

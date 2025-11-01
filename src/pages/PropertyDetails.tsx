@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { ContactDialog } from "@/components/ContactDialog";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +19,7 @@ import {
   Phone,
   Mail,
   ArrowLeft,
+  AlertTriangle,
 } from "lucide-react";
 import {
   Carousel,
@@ -221,19 +223,26 @@ const PropertyDetails = () => {
           <div className="lg:col-span-1">
             <Card className="sticky top-20 p-6">
               <h2 className="mb-4 text-xl font-semibold">Interessado?</h2>
+              {property.is_owner_direct && !property.verified && (
+                <div className="mb-4 flex items-start gap-2 rounded-md border border-yellow-500 bg-yellow-50 p-3 dark:bg-yellow-950/20">
+                  <AlertTriangle className="h-5 w-5 shrink-0 text-yellow-600 dark:text-yellow-500" />
+                  <div>
+                    <p className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+                      Anúncio de Proprietário
+                    </p>
+                    <p className="text-xs text-yellow-700 dark:text-yellow-300">
+                      Verifique a documentação pessoalmente
+                    </p>
+                  </div>
+                </div>
+              )}
               <p className="mb-6 text-sm text-muted-foreground">
                 Entre em contato para saber mais sobre este imóvel
               </p>
-              <div className="space-y-3">
-                <Button className="w-full" size="lg">
-                  <Phone className="mr-2 h-4 w-4" />
-                  Ligar
-                </Button>
-                <Button className="w-full" variant="outline" size="lg">
-                  <Mail className="mr-2 h-4 w-4" />
-                  Enviar mensagem
-                </Button>
-              </div>
+              <ContactDialog 
+                propertyId={property.id} 
+                propertyAddress={property.address}
+              />
             </Card>
           </div>
         </div>
