@@ -204,7 +204,7 @@ export default function MyProperties() {
                   return (
                     <Card key={property.id}>
                       <CardContent className="p-6">
-                        <div className="flex gap-4">
+                         <div className="flex gap-4">
                           <img
                             src={mainPhoto?.url || "/placeholder.svg"}
                             alt={property.address}
@@ -213,6 +213,11 @@ export default function MyProperties() {
                           <div className="flex-1">
                             <div className="flex justify-between items-start mb-2">
                               <div>
+                                {property.property_code && (
+                                  <Badge variant="outline" className="font-mono text-xs mb-1">
+                                    {property.property_code}
+                                  </Badge>
+                                )}
                                 <h3 className="text-xl font-semibold">{property.address}</h3>
                                 <p className="text-sm text-muted-foreground">
                                   {property.cities?.name} - {property.cities?.state}

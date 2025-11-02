@@ -252,6 +252,7 @@ export default function Admin() {
                 <Table>
                   <TableHeader>
                     <TableRow>
+                      <TableHead>Código</TableHead>
                       <TableHead>Imóvel</TableHead>
                       <TableHead>Proprietário</TableHead>
                       <TableHead>Preço</TableHead>
@@ -262,6 +263,11 @@ export default function Admin() {
                   <TableBody>
                     {properties.map((property) => (
                       <TableRow key={property.id}>
+                        <TableCell>
+                          <Badge variant="outline" className="font-mono text-xs">
+                            {property.property_code || "-"}
+                          </Badge>
+                        </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
                             <img

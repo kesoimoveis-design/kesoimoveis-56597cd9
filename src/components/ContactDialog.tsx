@@ -38,9 +38,10 @@ type ContactFormData = z.infer<typeof contactSchema>;
 interface ContactDialogProps {
   propertyId: string;
   propertyAddress: string;
+  propertyCode?: string;
 }
 
-export function ContactDialog({ propertyId, propertyAddress }: ContactDialogProps) {
+export function ContactDialog({ propertyId, propertyAddress, propertyCode }: ContactDialogProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
@@ -76,7 +77,7 @@ export function ContactDialog({ propertyId, propertyAddress }: ContactDialogProp
 
       // Redirect to WhatsApp
       const whatsappMessage = encodeURIComponent(
-        `Olá! Tenho interesse no imóvel:\n${propertyAddress}\n(ID: ${propertyId})\n\nVi no site KÈSO Imóveis.`
+        `Olá! Tenho interesse no imóvel${propertyCode ? ` ${propertyCode}` : ''}:\n${propertyAddress}\n\nVi no site KÈSO Imóveis.`
       );
       const whatsappUrl = `https://wa.me/5511951747705?text=${whatsappMessage}`;
       window.open(whatsappUrl, "_blank");

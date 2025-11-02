@@ -17,6 +17,7 @@ interface PropertyCardProps {
   verified?: boolean;
   ownerDirect?: boolean;
   featured?: boolean;
+  propertyCode?: string;
 }
 
 const PropertyCard = ({
@@ -32,6 +33,7 @@ const PropertyCard = ({
   verified = false,
   ownerDirect = false,
   featured = false,
+  propertyCode,
 }: PropertyCardProps) => {
   const formatPrice = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -67,6 +69,15 @@ const PropertyCard = ({
       </div>
 
       <CardContent className="p-4">
+        {/* Property Code */}
+        {propertyCode && (
+          <div className="mb-2">
+            <Badge variant="outline" className="font-mono text-xs">
+              {propertyCode}
+            </Badge>
+          </div>
+        )}
+        
         {/* Location */}
         <div className="mb-2 flex items-center text-sm text-muted-foreground">
           <MapPin className="mr-1 h-4 w-4" />

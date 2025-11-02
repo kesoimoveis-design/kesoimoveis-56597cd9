@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -9,22 +10,59 @@ import { Skeleton } from "@/components/ui/skeleton";
 const Properties = () => {
   const [properties, setProperties] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     fetchProperties();
-  }, []);
+  }, [searchParams]);
 
   const fetchProperties = async () => {
     try {
-      const { data, error } = await supabase
+      setLoading(true);
+      
+      let query = supabase
         .from("properties")
         .select(`
           *,
           cities (name, state),
           property_photos (url, is_main)
         `)
-        .eq("status", "active")
-        .order("created_at", { ascending: false });
+        .eq("status", "active");
+
+      // Apply filters from search params
+      const codigo = searchParams.get("codigo");
+      const location = searchParams.get("location");
+      const finalidade = searchParams.get("finalidade");
+      const tipo = searchParams.get("tipo");
+
+      if (codigo) {
+        query = query.ilike("property_code", `%${codigo}%`);
+      }
+
+      if (location) {
+        query = query.or(`address.ilike.%${location}%,cities.name.ilike.%${location}%`);
+      }
+
+      if (finalidade) {
+        query = query.eq("finalidade", finalidade === "venda" ? "buy" : "rent");
+      }
+
+      if (tipo) {
+        // Search by property type slug
+        const { data: typeData } = await supabase
+          .from("property_types")
+          .select("id")
+          .eq("slug", tipo)
+          .single();
+        
+        if (typeData) {
+          query = query.eq("type_id", typeData.id);
+        }
+      }
+
+      query = query.order("created_at", { ascending: false });
+
+      const { data, error } = await query;
 
       if (error) throw error;
 
@@ -43,6 +81,7 @@ const Properties = () => {
         verified: property.verified,
         ownerDirect: property.is_owner_direct,
         featured: property.featured,
+        propertyCode: property.property_code,
       }));
 
       setProperties(formattedProperties || []);

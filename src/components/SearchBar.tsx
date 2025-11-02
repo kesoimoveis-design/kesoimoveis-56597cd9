@@ -11,6 +11,7 @@ const SearchBar = () => {
   const [location, setLocation] = useState("");
   const [finalidade, setFinalidade] = useState("");
   const [tipo, setTipo] = useState("");
+  const [codigo, setCodigo] = useState("");
   const [propertyTypes, setPropertyTypes] = useState<any[]>([]);
 
   useEffect(() => {
@@ -30,13 +31,26 @@ const SearchBar = () => {
     if (location) params.append("location", location);
     if (finalidade) params.append("finalidade", finalidade);
     if (tipo) params.append("tipo", tipo);
+    if (codigo) params.append("codigo", codigo);
     
     navigate(`/imoveis?${params.toString()}`);
   };
 
   return (
     <div className="w-full rounded-xl border bg-card p-4 shadow-medium">
-      <div className="grid gap-4 md:grid-cols-5">
+      <div className="grid gap-4 md:grid-cols-6">
+        {/* Código */}
+        <div>
+          <Input
+            placeholder="Código (ex: CA123456)"
+            className="h-12 font-mono"
+            value={codigo}
+            onChange={(e) => setCodigo(e.target.value.toUpperCase())}
+            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+            maxLength={8}
+          />
+        </div>
+
         {/* Localização */}
         <div className="md:col-span-2">
           <Input

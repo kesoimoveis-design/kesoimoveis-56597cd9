@@ -151,6 +151,15 @@ const PropertyDetails = () => {
             {/* Property Info */}
             <div className="space-y-6">
               <div>
+                {/* Property Code */}
+                {property.property_code && (
+                  <div className="mb-3">
+                    <Badge variant="outline" className="font-mono text-sm px-3 py-1">
+                      Código: {property.property_code}
+                    </Badge>
+                  </div>
+                )}
+
                 <div className="mb-4 flex flex-wrap items-center gap-2">
                   {property.verified && (
                     <Badge className="bg-primary">
@@ -242,6 +251,7 @@ const PropertyDetails = () => {
               <ContactDialog 
                 propertyId={property.id} 
                 propertyAddress={property.address}
+                propertyCode={property.property_code}
               />
             </Card>
           </div>

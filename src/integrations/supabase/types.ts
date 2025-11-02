@@ -120,6 +120,7 @@ export type Database = {
           owner_id: string
           parking_spaces: number | null
           price: number
+          property_code: string | null
           status: Database["public"]["Enums"]["property_status"]
           type: Database["public"]["Enums"]["property_type"]
           type_id: string | null
@@ -142,6 +143,7 @@ export type Database = {
           owner_id: string
           parking_spaces?: number | null
           price: number
+          property_code?: string | null
           status?: Database["public"]["Enums"]["property_status"]
           type: Database["public"]["Enums"]["property_type"]
           type_id?: string | null
@@ -164,6 +166,7 @@ export type Database = {
           owner_id?: string
           parking_spaces?: number | null
           price?: number
+          property_code?: string | null
           status?: Database["public"]["Enums"]["property_status"]
           type?: Database["public"]["Enums"]["property_type"]
           type_id?: string | null
@@ -222,6 +225,7 @@ export type Database = {
       property_types: {
         Row: {
           active: boolean | null
+          code_prefix: string
           created_at: string | null
           description: string | null
           display_order: number | null
@@ -232,6 +236,7 @@ export type Database = {
         }
         Insert: {
           active?: boolean | null
+          code_prefix?: string
           created_at?: string | null
           description?: string | null
           display_order?: number | null
@@ -242,6 +247,7 @@ export type Database = {
         }
         Update: {
           active?: boolean | null
+          code_prefix?: string
           created_at?: string | null
           description?: string | null
           display_order?: number | null
