@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X, User, LogOut, Home as HomeIcon, Building2, PlusCircle, Settings } from "lucide-react";
+import { Menu, X, User, LogOut, Home as HomeIcon, Building2, PlusCircle, Settings, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -30,6 +30,10 @@ export default function Navbar() {
             <Link to="/imoveis" className="text-foreground hover:text-primary transition-colors flex items-center gap-2">
               <Building2 className="h-4 w-4" />
               Imóveis
+            </Link>
+            <Link to="/planos" className="text-foreground hover:text-primary transition-colors flex items-center gap-2">
+              <Star className="h-4 w-4" />
+              Planos
             </Link>
             {isOwner && (
               <>
@@ -105,6 +109,13 @@ export default function Navbar() {
               onClick={() => setIsOpen(false)}
             >
               Imóveis
+            </Link>
+            <Link
+              to="/planos"
+              className="block py-2 text-foreground hover:text-primary transition-colors"
+              onClick={() => setIsOpen(false)}
+            >
+              Planos
             </Link>
             {isOwner && (
               <>

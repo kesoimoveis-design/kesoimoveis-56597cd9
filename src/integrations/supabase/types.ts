@@ -79,6 +79,54 @@ export type Database = {
           },
         ]
       }
+      plans: {
+        Row: {
+          active: boolean | null
+          created_at: string
+          description: string | null
+          display_order: number | null
+          duration_days: number
+          featured: boolean | null
+          features: string[] | null
+          id: string
+          max_properties: number | null
+          name: string
+          price: number
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string
+          description?: string | null
+          display_order?: number | null
+          duration_days: number
+          featured?: boolean | null
+          features?: string[] | null
+          id?: string
+          max_properties?: number | null
+          name: string
+          price: number
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string
+          description?: string | null
+          display_order?: number | null
+          duration_days?: number
+          featured?: boolean | null
+          features?: string[] | null
+          id?: string
+          max_properties?: number | null
+          name?: string
+          price?: number
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -215,6 +263,60 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "property_photos_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      property_plans: {
+        Row: {
+          auto_renew: boolean | null
+          created_at: string
+          expires_at: string
+          id: string
+          plan_id: string
+          property_id: string
+          started_at: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          auto_renew?: boolean | null
+          created_at?: string
+          expires_at: string
+          id?: string
+          plan_id: string
+          property_id: string
+          started_at?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          auto_renew?: boolean | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          plan_id?: string
+          property_id?: string
+          started_at?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "property_plans_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "property_plans_property_id_fkey"
             columns: ["property_id"]
             isOneToOne: false
             referencedRelation: "properties"
@@ -360,6 +462,7 @@ export type Database = {
     }
     Functions: {
       expire_owner_direct_properties: { Args: never; Returns: undefined }
+      expire_property_plans: { Args: never; Returns: undefined }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

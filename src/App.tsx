@@ -15,6 +15,7 @@ import AddProperty from "./pages/AddProperty";
 import MyProperties from "./pages/MyProperties";
 import Admin from "./pages/Admin";
 import Profile from "./pages/Profile";
+import Plans from "./pages/Plans";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import NotFound from "./pages/NotFound";
@@ -37,6 +38,7 @@ const App = () => (
             <Route path="/cadastro" element={<Auth />} />
             <Route path="/imoveis" element={<Properties />} />
             <Route path="/imovel/:id" element={<PropertyDetails />} />
+            <Route path="/planos" element={<Plans />} />
             <Route path="/termos" element={<Terms />} />
             <Route path="/privacidade" element={<Privacy />} />
             <Route

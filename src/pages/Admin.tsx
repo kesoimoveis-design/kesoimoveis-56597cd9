@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Home, Users, MessageSquare, MapPin, CheckCircle, XCircle, Star, Building } from "lucide-react";
 import { CityManagement } from "@/components/admin/CityManagement";
 import { PropertyTypeManagement } from "@/components/admin/PropertyTypeManagement";
+import { PlanManagement } from "@/components/admin/PlanManagement";
 
 export default function Admin() {
   const { toast } = useToast();
@@ -444,6 +445,14 @@ export default function Admin() {
             <Card>
               <CardContent className="pt-6">
                 <PropertyTypeManagement />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="plans">
+            <Card>
+              <CardContent className="pt-6">
+                <PlanManagement />
               </CardContent>
             </Card>
           </TabsContent>
