@@ -27,9 +27,9 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <WhatsAppButton />
-        <CookieBanner />
         <BrowserRouter>
+          <WhatsAppButton />
+          <CookieBanner />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
