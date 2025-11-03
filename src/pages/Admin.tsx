@@ -26,6 +26,8 @@ export default function Admin() {
     pendingProperties: 0,
     totalUsers: 0,
     totalLeads: 0,
+    totalPlans: 0,
+    activePlans: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -75,6 +77,11 @@ export default function Admin() {
 
       setCities(citiesData || []);
 
+      // Fetch plans data
+      const { data: plansData } = await supabase
+        .from("plans")
+        .select("*");
+
       // Calculate stats
       setStats({
         totalProperties: propertiesData?.length || 0,
@@ -82,6 +89,8 @@ export default function Admin() {
         pendingProperties: propertiesData?.filter((p) => p.status === "pending").length || 0,
         totalUsers: usersData?.length || 0,
         totalLeads: leadsData?.length || 0,
+        totalPlans: plansData?.length || 0,
+        activePlans: plansData?.filter((p) => p.active).length || 0,
       });
     } catch (error: any) {
       toast({
@@ -183,7 +192,7 @@ export default function Admin() {
         <h1 className="text-3xl font-bold mb-6">Painel Admin</h1>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">Total Imóveis</CardTitle>
@@ -233,15 +242,26 @@ export default function Admin() {
               <div className="text-2xl font-bold">{stats.totalLeads}</div>
             </CardContent>
           </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium">Planos Ativos</CardTitle>
+              <Star className="h-4 w-4 text-yellow-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats.activePlans}/{stats.totalPlans}</div>
+            </CardContent>
+          </Card>
         </div>
 
         <Tabs defaultValue="properties" className="space-y-6">
-          <TabsList>
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="properties">Imóveis</TabsTrigger>
             <TabsTrigger value="users">Usuários</TabsTrigger>
-            <TabsTrigger value="leads">Leads</TabsTrigger>
             <TabsTrigger value="cities">Cidades</TabsTrigger>
             <TabsTrigger value="types">Tipos</TabsTrigger>
+            <TabsTrigger value="plans">Planos</TabsTrigger>
+            <TabsTrigger value="leads">Leads</TabsTrigger>
           </TabsList>
 
           <TabsContent value="properties">
