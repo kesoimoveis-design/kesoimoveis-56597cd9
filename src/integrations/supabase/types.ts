@@ -169,6 +169,7 @@ export type Database = {
           parking_spaces: number | null
           price: number
           property_code: string | null
+          show_in_carousel: boolean | null
           status: Database["public"]["Enums"]["property_status"]
           type: Database["public"]["Enums"]["property_type"]
           type_id: string | null
@@ -192,6 +193,7 @@ export type Database = {
           parking_spaces?: number | null
           price: number
           property_code?: string | null
+          show_in_carousel?: boolean | null
           status?: Database["public"]["Enums"]["property_status"]
           type: Database["public"]["Enums"]["property_type"]
           type_id?: string | null
@@ -215,6 +217,7 @@ export type Database = {
           parking_spaces?: number | null
           price?: number
           property_code?: string | null
+          show_in_carousel?: boolean | null
           status?: Database["public"]["Enums"]["property_status"]
           type?: Database["public"]["Enums"]["property_type"]
           type_id?: string | null

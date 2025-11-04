@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Upload, X, Loader2, MapPin } from "lucide-react";
@@ -29,6 +30,7 @@ const propertySchema = z.object({
   bathrooms: z.string().optional(),
   parking_spaces: z.string().optional(),
   description: z.string().optional(),
+  show_in_carousel: z.boolean().optional(),
 });
 
 type PropertyFormData = z.infer<typeof propertySchema>;
@@ -52,6 +54,7 @@ export default function AddProperty() {
     resolver: zodResolver(propertySchema),
     defaultValues: {
       finalidade: "buy",
+      show_in_carousel: false,
     },
   });
 
@@ -173,6 +176,7 @@ export default function AddProperty() {
         status: (isAdmin ? "active" : "pending") as "active" | "pending" | "expired" | "paused",
         verified: isAdmin,
         is_owner_direct: !isAdmin,
+        show_in_carousel: data.show_in_carousel || false,
       };
 
       const { data: property, error: propertyError } = await supabase
@@ -476,6 +480,31 @@ export default function AddProperty() {
 
                 {step === 3 && (
                   <div className="space-y-4">
+                    {isAdmin && (
+                      <FormField
+                        control={form.control}
+                        name="show_in_carousel"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                            <div className="space-y-0.5">
+                              <FormLabel className="text-base">
+                                Mostrar no Carrossel da Home
+                              </FormLabel>
+                              <FormDescription>
+                                Exibir este imóvel no carrossel principal da página inicial
+                              </FormDescription>
+                            </div>
+                            <FormControl>
+                              <Switch
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    )}
+
                     <div>
                       <FormLabel>Fotos do Imóvel</FormLabel>
                       <div className="mt-2 border-2 border-dashed rounded-lg p-6 text-center">

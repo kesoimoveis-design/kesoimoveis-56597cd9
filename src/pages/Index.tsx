@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SearchBar from "@/components/SearchBar";
 import PropertyCard from "@/components/PropertyCard";
+import HomeCarousel from "@/components/HomeCarousel";
 import { Building2, CheckCircle2, Shield, TrendingUp } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -63,25 +64,34 @@ const Index = () => {
     <div className="flex min-h-screen flex-col">
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-hero py-20 text-white md:py-32">
-        <div className="container relative z-10">
-          <div className="mx-auto max-w-3xl text-center">
-            <h1 className="mb-6 text-4xl font-bold md:text-5xl lg:text-6xl">
-              Caminhos que levam a conquistas.
-            </h1>
-            <p className="mb-8 text-lg text-white/90 md:text-xl">
-              Imóveis verificados pela KÈSO e anúncios diretos de proprietários.
-              Simples, seguro e transparente.
-            </p>
+      {/* Hero Carousel */}
+      <section className="relative">
+        <HomeCarousel />
+        
+        {/* Search Bar Overlay */}
+        <div className="absolute bottom-0 left-0 right-0 pb-8 bg-gradient-to-t from-black/60 to-transparent">
+          <div className="container">
             <div className="mx-auto max-w-4xl">
               <SearchBar />
             </div>
           </div>
         </div>
-        
-        {/* Decorative gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent" />
+      </section>
+
+      {/* Tagline Section */}
+      <section className="py-12 bg-gradient-hero text-white">
+        <div className="container text-center">
+          <h1 className="mb-4 text-3xl font-bold md:text-4xl lg:text-5xl">
+            Caminhos que levam a conquistas.
+          </h1>
+          <p className="text-lg text-white/90 md:text-xl max-w-3xl mx-auto">
+            Imóveis verificados pela KÈSO e anúncios diretos de proprietários.
+            Simples, seguro e transparente.
+          </p>
+          <p className="mt-4 text-sm text-white/80">
+            Daniela S. Hernandez - CRECI-SP 195742
+          </p>
+        </div>
       </section>
 
       {/* Features */}

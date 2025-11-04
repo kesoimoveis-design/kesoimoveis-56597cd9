@@ -88,8 +88,13 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-8 border-t pt-8 text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} KÈSO Imóveis. Todos os direitos reservados.</p>
+        <div className="mt-8 border-t pt-8 text-center space-y-2">
+          <p className="text-sm font-medium text-foreground">
+            Daniela S. Hernandez - CRECI-SP 195742
+          </p>
+          <p className="text-sm text-muted-foreground">
+            &copy; {new Date().getFullYear()} KÈSO Imóveis. Todos os direitos reservados.
+          </p>
         </div>
       </div>
     </footer>
