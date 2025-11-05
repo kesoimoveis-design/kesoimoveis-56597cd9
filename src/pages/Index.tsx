@@ -88,7 +88,7 @@ const Index = () => {
             Imóveis verificados pela KÈSO e anúncios diretos de proprietários.
             Simples, seguro e transparente.
           </p>
-          <p className="mt-4 text-sm text-white/80">
+          <p className="mt-7 text-sm text-white/80">
             Daniela S. Hernandez - CRECI-SP 195742
           </p>
         </div>
