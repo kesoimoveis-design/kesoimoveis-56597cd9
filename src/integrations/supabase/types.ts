@@ -41,6 +41,111 @@ export type Database = {
         }
         Relationships: []
       }
+      form_submissions: {
+        Row: {
+          client_cpf: string | null
+          client_email: string | null
+          client_name: string | null
+          created_at: string | null
+          form_data: Json
+          id: string
+          property_code: string
+          property_id: string | null
+          signature_method: string | null
+          signature_url: string | null
+          signed_at: string | null
+          status: string | null
+          submitted_by: string | null
+          template_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          client_cpf?: string | null
+          client_email?: string | null
+          client_name?: string | null
+          created_at?: string | null
+          form_data: Json
+          id?: string
+          property_code: string
+          property_id?: string | null
+          signature_method?: string | null
+          signature_url?: string | null
+          signed_at?: string | null
+          status?: string | null
+          submitted_by?: string | null
+          template_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          client_cpf?: string | null
+          client_email?: string | null
+          client_name?: string | null
+          created_at?: string | null
+          form_data?: Json
+          id?: string
+          property_code?: string
+          property_id?: string | null
+          signature_method?: string | null
+          signature_url?: string | null
+          signed_at?: string | null
+          status?: string | null
+          submitted_by?: string | null
+          template_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "form_submissions_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "form_submissions_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "form_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      form_templates: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          form_fields: Json
+          id: string
+          is_active: boolean | null
+          name: string
+          requires_signature: boolean | null
+          slug: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          form_fields: Json
+          id?: string
+          is_active?: boolean | null
+          name: string
+          requires_signature?: boolean | null
+          slug: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          form_fields?: Json
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          requires_signature?: boolean | null
+          slug?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           created_at: string

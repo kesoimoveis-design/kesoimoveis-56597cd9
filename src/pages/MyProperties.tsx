@@ -250,6 +250,12 @@ export default function MyProperties() {
                                   Ver
                                 </Link>
                               </Button>
+                              <Button size="sm" variant="outline" asChild>
+                                <Link to={`/editar-imovel/${property.id}`}>
+                                  <Edit className="h-4 w-4 mr-2" />
+                                  Editar
+                                </Link>
+                              </Button>
                               {property.status === "expired" && property.is_owner_direct && (
                                 <Button
                                   size="sm"

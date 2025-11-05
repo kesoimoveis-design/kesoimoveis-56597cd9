@@ -12,6 +12,7 @@ import Auth from "./pages/Auth";
 import Properties from "./pages/Properties";
 import PropertyDetails from "./pages/PropertyDetails";
 import AddProperty from "./pages/AddProperty";
+import EditProperty from "./pages/EditProperty";
 import MyProperties from "./pages/MyProperties";
 import Admin from "./pages/Admin";
 import Profile from "./pages/Profile";
@@ -64,6 +65,14 @@ const App = () => (
               element={
                 <ProtectedRoute requireOwner>
                   <MyProperties />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/editar-imovel/:id"
+              element={
+                <ProtectedRoute requireOwner>
+                  <EditProperty />
                 </ProtectedRoute>
               }
             />

@@ -13,6 +13,7 @@ import { Home, Users, MessageSquare, MapPin, CheckCircle, XCircle, Star, Buildin
 import { CityManagement } from "@/components/admin/CityManagement";
 import { PropertyTypeManagement } from "@/components/admin/PropertyTypeManagement";
 import { PlanManagement } from "@/components/admin/PlanManagement";
+import { FormManagement } from "@/components/admin/FormManagement";
 
 export default function Admin() {
   const { toast } = useToast();
@@ -255,13 +256,14 @@ export default function Admin() {
         </div>
 
         <Tabs defaultValue="properties" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="properties">Imóveis</TabsTrigger>
             <TabsTrigger value="users">Usuários</TabsTrigger>
             <TabsTrigger value="cities">Cidades</TabsTrigger>
             <TabsTrigger value="types">Tipos</TabsTrigger>
             <TabsTrigger value="plans">Planos</TabsTrigger>
             <TabsTrigger value="leads">Leads</TabsTrigger>
+            <TabsTrigger value="forms">Formulários</TabsTrigger>
           </TabsList>
 
           <TabsContent value="properties">
@@ -475,6 +477,10 @@ export default function Admin() {
                 <PlanManagement />
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="forms">
+            <FormManagement />
           </TabsContent>
         </Tabs>
       </main>
