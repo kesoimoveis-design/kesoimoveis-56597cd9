@@ -15,6 +15,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
+import { PhotoManager } from "@/components/property/PhotoManager";
+import { FormsList } from "@/components/property/FormsList";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const propertySchema = z.object({
   type: z.enum(["casa", "apartamento", "terreno", "comercial", "rural"]),
@@ -37,6 +40,7 @@ export default function EditProperty() {
   const [cities, setCities] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [property, setProperty] = useState<any>(null);
 
   const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<z.infer<typeof propertySchema>>({
     resolver: zodResolver(propertySchema),
@@ -66,6 +70,8 @@ export default function EditProperty() {
           navigate("/meus-imoveis");
           return;
         }
+
+        setProperty(property);
 
         // Set form values
         setValue("type", property.type);
@@ -153,9 +159,22 @@ export default function EditProperty() {
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
       <main className="flex-1 container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-6">Editar Imóvel</h1>
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold">Editar Imóvel</h1>
+          {property?.property_code && (
+            <p className="text-muted-foreground mt-1">Código: {property.property_code}</p>
+          )}
+        </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <Tabs defaultValue="info" className="space-y-6">
+          <TabsList>
+            <TabsTrigger value="info">Informações</TabsTrigger>
+            <TabsTrigger value="photos">Fotos</TabsTrigger>
+            <TabsTrigger value="forms">Formulários</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="info">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle>Informações Básicas</CardTitle>
@@ -250,16 +269,31 @@ export default function EditProperty() {
             </CardContent>
           </Card>
 
-          <div className="flex gap-4 justify-end">
-            <Button type="button" variant="outline" onClick={() => navigate("/meus-imoveis")}>
-              Cancelar
-            </Button>
-            <Button type="submit" disabled={submitting}>
-              {submitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-              Salvar Alterações
-            </Button>
-          </div>
-        </form>
+              <div className="flex gap-4 justify-end">
+                <Button type="button" variant="outline" onClick={() => navigate("/meus-imoveis")}>
+                  Cancelar
+                </Button>
+                <Button type="submit" disabled={submitting}>
+                  {submitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                  Salvar Alterações
+                </Button>
+              </div>
+            </form>
+          </TabsContent>
+
+          <TabsContent value="photos">
+            {property && <PhotoManager propertyId={property.id} />}
+          </TabsContent>
+
+          <TabsContent value="forms">
+            {property && (
+              <FormsList 
+                propertyId={property.id} 
+                propertyCode={property.property_code}
+              />
+            )}
+          </TabsContent>
+        </Tabs>
       </main>
       <Footer />
     </div>

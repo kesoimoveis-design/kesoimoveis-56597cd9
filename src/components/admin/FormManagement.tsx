@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Search, FileText, Eye, Download } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AuthorizationForm } from "@/components/forms/AuthorizationForm";
+import { PropertySelector } from "@/components/admin/PropertySelector";
 
 export function FormManagement() {
   const { toast } = useToast();
@@ -16,6 +17,7 @@ export function FormManagement() {
   const [loading, setLoading] = useState(true);
   const [searchCode, setSearchCode] = useState("");
   const [selectedProperty, setSelectedProperty] = useState<any>(null);
+  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     fetchSubmissions();
@@ -81,22 +83,29 @@ export function FormManagement() {
           </DialogTrigger>
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Preencher Formulário</DialogTitle>
+              <DialogTitle>
+                {showForm ? "Autorização de Comercialização" : "Selecionar Imóvel"}
+              </DialogTitle>
             </DialogHeader>
-            {selectedProperty ? (
+            {!showForm ? (
+              <PropertySelector
+                onSelect={(property) => {
+                  setSelectedProperty(property);
+                  setShowForm(true);
+                }}
+                allowNewProperty={true}
+              />
+            ) : selectedProperty ? (
               <AuthorizationForm
                 propertyId={selectedProperty.id}
                 propertyCode={selectedProperty.property_code}
                 onSuccess={() => {
                   fetchSubmissions();
                   setSelectedProperty(null);
+                  setShowForm(false);
                 }}
               />
-            ) : (
-              <div className="text-center py-8">
-                <p className="text-muted-foreground">Selecione um imóvel para continuar</p>
-              </div>
-            )}
+            ) : null}
           </DialogContent>
         </Dialog>
       </div>
