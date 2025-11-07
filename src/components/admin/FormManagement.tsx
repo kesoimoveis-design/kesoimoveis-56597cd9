@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,7 +10,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Search, FileText, Eye, Download } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AuthorizationForm } from "@/components/forms/AuthorizationForm";
+import { CaptacaoForm } from "@/components/forms/CaptacaoForm";
 import { PropertySelector } from "@/components/admin/PropertySelector";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export function FormManagement() {
   const { toast } = useToast();
@@ -18,6 +21,7 @@ export function FormManagement() {
   const [searchCode, setSearchCode] = useState("");
   const [selectedProperty, setSelectedProperty] = useState<any>(null);
   const [showForm, setShowForm] = useState(false);
+  const [selectedFormType, setSelectedFormType] = useState<string>("captacao");
 
   useEffect(() => {
     fetchSubmissions();
@@ -84,16 +88,55 @@ export function FormManagement() {
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
-                {showForm ? "Autorização de Comercialização" : "Selecionar Imóvel"}
+                {!showForm ? "Novo Formulário" : selectedFormType === "captacao" ? "Captação de Imóvel" : "Autorização de Comercialização"}
               </DialogTitle>
             </DialogHeader>
+            
             {!showForm ? (
-              <PropertySelector
-                onSelect={(property) => {
-                  setSelectedProperty(property);
-                  setShowForm(true);
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Tipo de Formulário</Label>
+                  <Select value={selectedFormType} onValueChange={setSelectedFormType}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione o tipo" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="captacao">Captação de Imóvel</SelectItem>
+                      <SelectItem value="autorizacao">Autorização de Comercialização</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {selectedFormType === "captacao" ? (
+                  <div className="space-y-2">
+                    <p className="text-sm text-muted-foreground">
+                      O formulário de captação cria um novo imóvel com código automático e status aguardando aprovação.
+                    </p>
+                    <Button onClick={() => setShowForm(true)} className="w-full">
+                      Iniciar Captação
+                    </Button>
+                  </div>
+                ) : (
+                  <PropertySelector
+                    onSelect={(property) => {
+                      setSelectedProperty(property);
+                      setShowForm(true);
+                    }}
+                    allowNewProperty={false}
+                  />
+                )}
+              </div>
+            ) : selectedFormType === "captacao" ? (
+              <CaptacaoForm
+                onSuccess={(propertyId, propertyCode) => {
+                  fetchSubmissions();
+                  setSelectedProperty(null);
+                  setShowForm(false);
+                  toast({
+                    title: "Sucesso",
+                    description: `Imóvel ${propertyCode} cadastrado e aguardando aprovação.`,
+                  });
                 }}
-                allowNewProperty={true}
               />
             ) : selectedProperty ? (
               <AuthorizationForm
