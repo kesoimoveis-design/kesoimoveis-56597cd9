@@ -270,6 +270,7 @@ export type Database = {
           finalidade: Database["public"]["Enums"]["property_finalidade"]
           id: string
           is_owner_direct: boolean
+          neighborhood: string | null
           owner_id: string
           parking_spaces: number | null
           price: number
@@ -294,6 +295,7 @@ export type Database = {
           finalidade: Database["public"]["Enums"]["property_finalidade"]
           id?: string
           is_owner_direct?: boolean
+          neighborhood?: string | null
           owner_id: string
           parking_spaces?: number | null
           price: number
@@ -318,6 +320,7 @@ export type Database = {
           finalidade?: Database["public"]["Enums"]["property_finalidade"]
           id?: string
           is_owner_direct?: boolean
+          neighborhood?: string | null
           owner_id?: string
           parking_spaces?: number | null
           price?: number
@@ -582,7 +585,12 @@ export type Database = {
     Enums: {
       app_role: "admin" | "owner" | "buyer"
       property_finalidade: "buy" | "rent"
-      property_status: "active" | "pending" | "expired" | "paused"
+      property_status:
+        | "active"
+        | "pending"
+        | "expired"
+        | "paused"
+        | "pending_approval"
       property_type: "casa" | "apartamento" | "terreno" | "comercial" | "rural"
       service_order_status: "pending" | "completed" | "cancelled"
     }
@@ -714,7 +722,13 @@ export const Constants = {
     Enums: {
       app_role: ["admin", "owner", "buyer"],
       property_finalidade: ["buy", "rent"],
-      property_status: ["active", "pending", "expired", "paused"],
+      property_status: [
+        "active",
+        "pending",
+        "expired",
+        "paused",
+        "pending_approval",
+      ],
       property_type: ["casa", "apartamento", "terreno", "comercial", "rural"],
       service_order_status: ["pending", "completed", "cancelled"],
     },

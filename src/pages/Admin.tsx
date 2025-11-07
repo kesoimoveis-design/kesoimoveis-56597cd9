@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Home, Users, MessageSquare, MapPin, CheckCircle, XCircle, Star, Building } from "lucide-react";
+import { Home, Users, MessageSquare, MapPin, CheckCircle, XCircle, Star, Building, FileText } from "lucide-react";
 import { CityManagement } from "@/components/admin/CityManagement";
 import { PropertyTypeManagement } from "@/components/admin/PropertyTypeManagement";
 import { PlanManagement } from "@/components/admin/PlanManagement";
@@ -256,14 +256,35 @@ export default function Admin() {
         </div>
 
         <Tabs defaultValue="properties" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-7">
-            <TabsTrigger value="properties">Imóveis</TabsTrigger>
-            <TabsTrigger value="users">Usuários</TabsTrigger>
-            <TabsTrigger value="cities">Cidades</TabsTrigger>
-            <TabsTrigger value="types">Tipos</TabsTrigger>
-            <TabsTrigger value="plans">Planos</TabsTrigger>
-            <TabsTrigger value="leads">Leads</TabsTrigger>
-            <TabsTrigger value="forms">Formulários</TabsTrigger>
+          <TabsList className="flex w-full overflow-x-auto md:grid md:grid-cols-7 gap-1">
+            <TabsTrigger value="properties" className="flex items-center gap-2 whitespace-nowrap">
+              <Home className="h-4 w-4" />
+              <span className="hidden sm:inline">Imóveis</span>
+            </TabsTrigger>
+            <TabsTrigger value="users" className="flex items-center gap-2 whitespace-nowrap">
+              <Users className="h-4 w-4" />
+              <span className="hidden sm:inline">Usuários</span>
+            </TabsTrigger>
+            <TabsTrigger value="cities" className="flex items-center gap-2 whitespace-nowrap">
+              <MapPin className="h-4 w-4" />
+              <span className="hidden sm:inline">Cidades</span>
+            </TabsTrigger>
+            <TabsTrigger value="types" className="flex items-center gap-2 whitespace-nowrap">
+              <Building className="h-4 w-4" />
+              <span className="hidden sm:inline">Tipos</span>
+            </TabsTrigger>
+            <TabsTrigger value="plans" className="flex items-center gap-2 whitespace-nowrap">
+              <Star className="h-4 w-4" />
+              <span className="hidden sm:inline">Planos</span>
+            </TabsTrigger>
+            <TabsTrigger value="leads" className="flex items-center gap-2 whitespace-nowrap">
+              <MessageSquare className="h-4 w-4" />
+              <span className="hidden sm:inline">Leads</span>
+            </TabsTrigger>
+            <TabsTrigger value="forms" className="flex items-center gap-2 whitespace-nowrap">
+              <FileText className="h-4 w-4" />
+              <span className="hidden sm:inline">Formulários</span>
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="properties">

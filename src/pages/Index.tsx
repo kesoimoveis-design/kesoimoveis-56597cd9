@@ -50,6 +50,8 @@ const Index = () => {
         ownerDirect: property.is_owner_direct,
         featured: property.featured,
         propertyCode: property.property_code,
+        neighborhood: property.neighborhood,
+        fullAddress: property.address,
       }));
 
       setFeaturedProperties(formattedProperties || []);

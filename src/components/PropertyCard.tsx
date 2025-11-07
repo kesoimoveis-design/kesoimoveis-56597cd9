@@ -18,6 +18,8 @@ interface PropertyCardProps {
   ownerDirect?: boolean;
   featured?: boolean;
   propertyCode?: string;
+  neighborhood?: string;
+  fullAddress?: string;
 }
 
 const PropertyCard = ({
@@ -34,6 +36,8 @@ const PropertyCard = ({
   ownerDirect = false,
   featured = false,
   propertyCode,
+  neighborhood,
+  fullAddress,
 }: PropertyCardProps) => {
   const formatPrice = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -81,7 +85,12 @@ const PropertyCard = ({
         {/* Location */}
         <div className="mb-2 flex items-center text-sm text-muted-foreground">
           <MapPin className="mr-1 h-4 w-4" />
-          <span>{location}</span>
+          <span>
+            {ownerDirect 
+              ? (neighborhood ? `${neighborhood}, ${location}` : location)
+              : (fullAddress || location)
+            }
+          </span>
         </div>
 
         {/* Title */}
